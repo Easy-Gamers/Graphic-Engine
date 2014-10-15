@@ -102,7 +102,6 @@ public class Art {
 //		return null;
 //	}
     
-    
     public static BufferedImage map(String res, int level, int w, int h, Object game){
 		try {
 			// Load the BufferedImage
@@ -156,6 +155,40 @@ public class Art {
 		try {
 		//BufferedImage image = ImageIO.read(Destinyor.class.getResourceAsStream(res));
 			InputStream input = game.getClass().getResourceAsStream(res);
+                    //BufferedImage image = ImageIO.read(game.getClass().getResourceAsStream(res));
+			BufferedImage image = ImageIO.read(input);
+		
+		int xt = image.getWidth() / w;
+		int yt = image.getHeight() / h;
+		
+		Bitmap[][] result = new Bitmap[xt][yt];
+		BufferedImage sub = null;
+		for(int i = 0; i < xt; i++) {
+			for(int j = 0; j < yt; j++){
+				result[i][j] = new Bitmap(w, h);
+				sub = image.getSubimage(i * w, j * h, w, h);
+				sub.getRGB(0, 0, w, h, result[i][j].pixels, 0, w);
+			}
+		}
+		input.close();
+		input = null;
+//		image.flush();
+//		image = null;
+//		sub.flush();
+//		sub = null;
+			return result;
+		} catch(IOException e) {
+			System.exit(1);
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public static Bitmap[][] cut(int w, int h, String res){
+		try {
+		//BufferedImage image = ImageIO.read(Destinyor.class.getResourceAsStream(res));
+			InputStream input = new FileInputStream(res);
                     //BufferedImage image = ImageIO.read(game.getClass().getResourceAsStream(res));
 			BufferedImage image = ImageIO.read(input);
 		
