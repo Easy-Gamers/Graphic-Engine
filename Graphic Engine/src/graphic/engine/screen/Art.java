@@ -21,6 +21,7 @@ public class Art {
     private static Bitmap[][] minimap;
     private static Bitmap[][] map;
     private static Bitmap[][] icons;
+    private static Bitmap[][] scrollbars;
     
     public static void setSpritesheet(String res, int w, int h, Object game) {
         spritesheet = cut(res, w, h, game);
@@ -68,6 +69,14 @@ public class Art {
     
     public static Bitmap[][] getIcons() {
         return icons;
+    }
+    
+    public static void setScrollbars(String res, int w, int h, Object game) {
+    	scrollbars = cut(res, w, h, game);
+    }
+    
+    public static Bitmap[][] getScrollbars() {
+    	return scrollbars;
     }
 //public static Bitmap[][] debugspritesheet = cut("/icon.png", 32, 32);
 //	public static Bitmap[][] spritesheet = cut("/icon0.png", 32, 32);
