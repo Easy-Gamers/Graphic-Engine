@@ -1,20 +1,14 @@
 package graphic.engine.screen;
 
-//import me.zabuzasword3.engine.*;
-//import me.zabuzasword3.engine.graphics.Bitmap;
-
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.io.*;
 import java.awt.image.*;
-
 import javax.imageio.*;
-//import me.zabuzasword3.engine.world.LevelMap;
 
 public class Art {
 	
-    //public static Object game;
     private static Bitmap[][] spritesheet;
     private static Bitmap[][] font;
     private static Bitmap[][] buttons;
@@ -78,48 +72,22 @@ public class Art {
     public static Bitmap[][] getScrollbars() {
     	return scrollbars;
     }
-//public static Bitmap[][] debugspritesheet = cut("/icon.png", 32, 32);
-//	public static Bitmap[][] spritesheet = cut("/icon0.png", 32, 32);
-//	public static Bitmap[][] font = cut("/8fontTest.png", 8, 8);
-//	public static Bitmap[][] Buttons = cut("/button.png", 120, 20);
-//        public static Bitmap[][] Minimap = cut("/map.png", 512, 512);
-	
-//	public static BufferedImage map(String res, Object game){
-//		try {
-//			// Load the BufferedImage
-//			BufferedImage[] image = new BufferedImage[LevelMap.Maps.size()];//ImageIO.read(Destinyor.class.getResourceAsStream(res));
-//			//image[LevelMap.level - 1] = ImageIO.read(game.class.getResourceAsStream(res));
-//                        image[LevelMap.level - 1] = ImageIO.read(game.getClass().getResourceAsStream(res));
-//                        
-//                        int w = 512;
-//                        int h = 512;
-//                        
-////			int w = image.getWidth();
-////			int h = image.getHeight();
-//			
-//			// Create Bitmap
-//			Bitmap result = new Bitmap(w, h);
-//			
-//			// Grab RGB Data from image using BufferedImage built in Method
-//			image[LevelMap.level - 1].getRGB(0, 0, w * LevelMap.levelX, h * LevelMap.levelY, result.pixels, 0, w * LevelMap.levelX);
-//			
-//			return image[LevelMap.level - 1];
-//			
-//			} catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
     
+    /**
+     * 
+     * @param res
+     * @param level
+     * @param w
+     * @param h
+     * @param game
+     * @return
+     */
     public static BufferedImage map(String res, int level, int w, int h, Object game){
 		try {
 			// Load the BufferedImage
-			BufferedImage[] image = new BufferedImage[1];//ImageIO.read(Destinyor.class.getResourceAsStream(res));
-			//image[LevelMap.level - 1] = ImageIO.read(game.class.getResourceAsStream(res));
-                        image[level] = ImageIO.read(game.getClass().getResourceAsStream(res));
-                        
-//			int w = image.getWidth();
-//			int h = image.getHeight();
+			BufferedImage[] image = new BufferedImage[1];
+			
+            image[level] = ImageIO.read(game.getClass().getResourceAsStream(res));
 			
 			// Create Bitmap
 			Bitmap result = new Bitmap(w, h);
@@ -134,13 +102,17 @@ public class Art {
 		}
 		return null;
 	}
-	
-	// Load Image than transform into Bitmap
+    
+    /**
+     * Load Image than transform into Bitmap
+     * @param res
+     * @param game
+     * @return
+     */
 	public static Bitmap load(String res, Object game){
 		try {
 			// Load the BufferedImage
-			//BufferedImage image = ImageIO.read(Destinyor.class.getResourceAsStream(res));
-                        BufferedImage image = ImageIO.read(game.getClass().getResourceAsStream(res));
+            BufferedImage image = ImageIO.read(game.getClass().getResourceAsStream(res));
 			
 			int w = image.getWidth();
 			int h = image.getHeight();
@@ -159,12 +131,17 @@ public class Art {
 		return null;
 	}
 	
-	// load sprite sheet and split it
+	/**
+	 * load sprite sheet and split it
+	 * @param res
+	 * @param w
+	 * @param h
+	 * @param game
+	 * @return
+	 */
 	public static Bitmap[][] cut(String res, int w, int h, Object game){
 		try {
-		//BufferedImage image = ImageIO.read(Destinyor.class.getResourceAsStream(res));
 			InputStream input = game.getClass().getResourceAsStream(res);
-                    //BufferedImage image = ImageIO.read(game.getClass().getResourceAsStream(res));
 			BufferedImage image = ImageIO.read(input);
 		
 		int xt = image.getWidth() / w;
@@ -180,11 +157,10 @@ public class Art {
 			}
 		}
 		input.close();
+		image.flush();
+		sub.flush();
 		input = null;
-//		image.flush();
-//		image = null;
-//		sub.flush();
-//		sub = null;
+		
 			return result;
 		} catch(IOException e) {
 			System.exit(1);
@@ -194,11 +170,16 @@ public class Art {
 		return null;
 	}
 	
+	/**
+	 * load sprite sheet and split it
+	 * @param w
+	 * @param h
+	 * @param res
+	 * @return
+	 */
 	public static Bitmap[][] cut(int w, int h, String res){
 		try {
-		//BufferedImage image = ImageIO.read(Destinyor.class.getResourceAsStream(res));
 			InputStream input = new FileInputStream(res);
-                    //BufferedImage image = ImageIO.read(game.getClass().getResourceAsStream(res));
 			BufferedImage image = ImageIO.read(input);
 		
 		int xt = image.getWidth() / w;
@@ -213,12 +194,10 @@ public class Art {
 				sub.getRGB(0, 0, w, h, result[i][j].pixels, 0, w);
 			}
 		}
+		image.flush();
+		sub.flush();
 		input.close();
 		input = null;
-//		image.flush();
-//		image = null;
-//		sub.flush();
-//		sub = null;
 			return result;
 		} catch(IOException e) {
 			System.exit(1);
@@ -227,21 +206,37 @@ public class Art {
 		
 		return null;
 	}
-        
+       
+	/**
+	 * 
+	 * @param image
+	 * @return
+	 */
     public static Bitmap convert(BufferedImage image) {
             
     	Bitmap result = new Bitmap(image.getWidth(), image.getHeight());
-            
-           // BufferedImage sub = image.getSubimage(0, 0, image.getWidth(), image.getHeight());
+    	
     	image.getRGB(0, 0, image.getWidth(), image.getHeight(), result.pixels, 0, image.getWidth());
-            
+    	
+        image.flush();
         return result;
     }
         
+    /**
+     * 
+     * @param img
+     * @param targetWidth
+     * @param targetHeight
+     * @param key
+     * @param hint
+     * @param higherQuality
+     * @return
+     */
         public static BufferedImage getScaledInstance(BufferedImage img, int targetWidth, int targetHeight, RenderingHints.Key key, Object hint, boolean higherQuality) {
-        int type = (img.getTransparency() == Transparency.OPAQUE) ?
-            BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-        BufferedImage ret = (BufferedImage)img;
+        int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+        
+        BufferedImage ret = (BufferedImage) img;
+        
         int w, h;
         if (higherQuality) {
             // Use multi-step technique: start with original size, then
@@ -255,7 +250,7 @@ public class Art {
             w = targetWidth;
             h = targetHeight;
         }
-        
+        img.flush();
         do {
             if (higherQuality && w <= targetWidth) {
                 w /= 2;
@@ -278,15 +273,25 @@ public class Art {
             g2.dispose();
 
             ret = tmp;
+            
+            tmp.flush();
         } while (w != targetWidth || h != targetHeight);
 
         return ret;
     }
-        
+        /**
+         * 
+         * @param bitmap
+         * @param w
+         * @param h
+         * @param game
+         * @return
+         * @throws IOException
+         */
         public static BufferedImage convertSpritesheet(Bitmap bitmap, int w, int h, Object game) throws IOException {
         	Bitmap result = bitmap;
         	InputStream input = null;
-        	BufferedImage image;
+        	BufferedImage image = null;
         	BufferedImage finalImage = null;
         	for(int i = 0; i < Art.getSpritesheet().length; i++) {
         		for(int j = 0; j < Art.getSpritesheet()[i].length; j++) {
@@ -294,20 +299,28 @@ public class Art {
         				input = game.getClass().getResourceAsStream("/icon0.png");
         				image = ImageIO.read(input);
         				finalImage = image.getSubimage(i * w, j * h, w, h);
-        				//spritesheet = cut("/icon0.png", w, h, game);
         			}
         		}
         	}
+        	if(image != null)
+        	image.flush();
         	input.close();
         	input = null;
         	image = null;
         	return finalImage;
         }
         
+        /**
+         * 
+         * @param bitmap
+         * @param game
+         * @return
+         * @throws IOException
+         */
         public static BufferedImage convertSpritesheet(Bitmap bitmap, Object game) throws IOException {
         	Bitmap result = bitmap;
         	InputStream input = null;
-        	BufferedImage image;
+        	BufferedImage image = null;
         	BufferedImage finalImage = null;
         	for(int i = 0; i < Art.getSpritesheet().length; i++) {
         		for(int j = 0; j < Art.getSpritesheet()[i].length; j++) {
@@ -315,10 +328,11 @@ public class Art {
         				input = game.getClass().getResourceAsStream("/icon0.png");
         				image = ImageIO.read(input);
         				finalImage = image.getSubimage(i * 32, j * 32, 32, 32);
-        				//spritesheet = cut("/icon0.png", w, h, game);
         			}
         		}
         	}
+        	if(image != null)
+        	image.flush();
         	input.close();
         	input = null;
         	image = null;
