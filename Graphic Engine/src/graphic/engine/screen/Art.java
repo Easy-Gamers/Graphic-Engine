@@ -210,7 +210,7 @@ public class Art {
 	/**
 	 * 
 	 * @param image
-	 * @return
+	 * @return Bitmap
 	 */
     public static Bitmap convert(BufferedImage image) {
             
@@ -221,6 +221,27 @@ public class Art {
         image.flush();
         return result;
     }
+    
+    public static Bitmap getAndConvert(String res, int width, int height) {
+    	try {
+			InputStream input = new FileInputStream(res);
+			BufferedImage image = ImageIO.read(input);
+			
+			BufferedImage finalBuffer = getScaledInstance(image, width, height, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, false);
+			
+			Bitmap picture = convert(finalBuffer);
+			input.close();
+			image.flush();
+			finalBuffer.flush();
+			return picture;
+			
+    	} catch(IOException e) {
+			System.exit(1);
+			e.printStackTrace();
+		}
+		
+		return null;
+    }
         
     /**
      * 
@@ -230,7 +251,7 @@ public class Art {
      * @param key
      * @param hint
      * @param higherQuality
-     * @return
+     * @return zoomed in
      */
         public static BufferedImage getScaledInstance(BufferedImage img, int targetWidth, int targetHeight, RenderingHints.Key key, Object hint, boolean higherQuality) {
         int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
@@ -285,7 +306,7 @@ public class Art {
          * @param w
          * @param h
          * @param game
-         * @return
+         * @return BufferedImage
          * @throws IOException
          */
         public static BufferedImage convertSpritesheet(Bitmap bitmap, int w, int h, Object game) throws IOException {
@@ -314,7 +335,7 @@ public class Art {
          * 
          * @param bitmap
          * @param game
-         * @return
+         * @return BufferedImage
          * @throws IOException
          */
         public static BufferedImage convertSpritesheet(Bitmap bitmap, Object game) throws IOException {

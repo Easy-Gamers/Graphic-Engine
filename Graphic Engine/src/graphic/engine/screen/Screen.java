@@ -17,7 +17,11 @@ public class Screen {
 	//public double[] pPixels;
 	//public int[] npcPixels;
 	
-	
+	/**
+	 * 
+	 * @param w
+	 * @param h
+	 */
 	public Screen(int w, int h) {
 		this.w = w;
 		this.h = h;
@@ -128,5 +132,13 @@ public class Screen {
         
         public static int getHeight() {
         	return height;
+        }
+        
+        public int getThisWidth() {
+        	return w;
+        }
+        
+        public int getThisHeight() {
+        	return h;
         }
 }
