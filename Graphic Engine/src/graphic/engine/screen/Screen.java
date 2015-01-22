@@ -33,10 +33,11 @@ public class Screen {
 		}
 		
 		image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-		//cutscene = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 		
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-		//npcPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+		// In this line you are not creating a new object.
+		// You are storing a reference to the object int[] in your variable pixels.
+		// Anything you change in pixels, gets changed inside of the int[] object in image.
 	}
 	
 	// Alternative to g.DrawImage
