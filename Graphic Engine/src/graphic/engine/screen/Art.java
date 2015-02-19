@@ -8,70 +8,27 @@ import java.awt.image.*;
 import javax.imageio.*;
 
 public class Art {
+    
+    protected static Bitmap[][] set(String res, int w, int h, Object game) {
+    	return cut(res, w, h, game);
+    }
+    
+    protected static Bitmap[][] set(String res, int w, int h) {
+    	return cut(res, w, h);
+    }
+    
+
+	private static BufferedImage flush(BufferedImage image) {
+		image.flush();
+		image = null;
+		return image;
+	}
 	
-    private static Bitmap[][] spritesheet;
-    private static Bitmap[][] font;
-    private static Bitmap[][] buttons;
-    private static Bitmap[][] minimap;
-    private static Bitmap[][] map;
-    private static Bitmap[][] icons;
-    private static Bitmap[][] scrollbars;
-    
-    public static void setSpritesheet(String res, int w, int h, Object game) {
-        spritesheet = cut(res, w, h, game);
-    }
-    
-    public static Bitmap[][] getSpritesheet() {
-        return spritesheet;
-    }
-    
-    public static void setFont(String res, int w, int h, Object game) {
-        font = cut(res, w, h, game);
-    }
-    
-    public static Bitmap[][] getFont() {
-        return font;
-    }
-    
-    public static void setButtons(String res, int w, int h, Object game) {
-        buttons = cut(res, w, h, game);
-    }
-    
-    public static Bitmap[][] getButtons() {
-        return buttons;
-    }
-    
-    public static void setMinimap(String res, int w, int h, Object game) {
-        minimap = cut(res, w, h, game);
-    }
-    
-    public static Bitmap[][] getMinimap() {
-        return minimap;
-    }
-    
-    public static void setMap(String res, int w, int h, Object game) {
-        map = cut(res, w, h, game);
-    }
-    
-    public static Bitmap[][] getMap() {
-        return map;
-    }
-    
-    public static void setIcons(String res, int w, int h, Object game) {
-        icons = cut(res, w, h, game);
-    }
-    
-    public static Bitmap[][] getIcons() {
-        return icons;
-    }
-    
-    public static void setScrollbars(String res, int w, int h, Object game) {
-    	scrollbars = cut(res, w, h, game);
-    }
-    
-    public static Bitmap[][] getScrollbars() {
-    	return scrollbars;
-    }
+	private static InputStream close(InputStream input) throws IOException {
+		input.close();
+		input = null;
+		return input;
+	}
     
     /**
      * 
@@ -109,7 +66,7 @@ public class Art {
      * @param game
      * @return
      */
-	public static Bitmap load(String res, Object game){
+	protected static Bitmap load(String res, Object game){
 		try {
 			// Load the BufferedImage
             BufferedImage image = ImageIO.read(game.getClass().getResourceAsStream(res));
@@ -122,9 +79,8 @@ public class Art {
 			
 			// Grab RGB Data from image using BufferedImage built in Method
 			image.getRGB(0, 0, w, h, result.pixels, 0, w);
-			
+			image = flush(image);
 			return result;
-			
 			} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -139,7 +95,7 @@ public class Art {
 	 * @param game
 	 * @return
 	 */
-	public static Bitmap[][] cut(String res, int w, int h, Object game){
+	private static Bitmap[][] cut(String res, int w, int h, Object game){
 		try {
 			InputStream input = game.getClass().getResourceAsStream(res);
 			BufferedImage image = ImageIO.read(input);
@@ -156,10 +112,9 @@ public class Art {
 				sub.getRGB(0, 0, w, h, result[i][j].pixels, 0, w);
 			}
 		}
-		input.close();
-		image.flush();
-		sub.flush();
-		input = null;
+		input = close(input);
+		image = flush(image);
+		sub = flush(sub);
 		
 			return result;
 		} catch(IOException e) {
@@ -177,7 +132,7 @@ public class Art {
 	 * @param res
 	 * @return
 	 */
-	public static Bitmap[][] cut(int w, int h, String res){
+	private static Bitmap[][] cut(String res, int w, int h){
 		try {
 			InputStream input = new FileInputStream(res);
 			BufferedImage image = ImageIO.read(input);
@@ -194,10 +149,10 @@ public class Art {
 				sub.getRGB(0, 0, w, h, result[i][j].pixels, 0, w);
 			}
 		}
-		image.flush();
-		sub.flush();
-		input.close();
-		input = null;
+		input = close(input);
+		image = flush(image);
+		sub = flush(sub);
+		
 			return result;
 		} catch(IOException e) {
 			System.exit(1);
@@ -218,28 +173,148 @@ public class Art {
     	
     	image.getRGB(0, 0, image.getWidth(), image.getHeight(), result.pixels, 0, image.getWidth());
     	
-        image.flush();
+        image = flush(image);
         return result;
     }
     
-    public static Bitmap getAndConvert(String res, int width, int height) {
+    public static Bitmap getAndConvert(String res, int width, int height, boolean higherQuality) {
     	try {
 			InputStream input = new FileInputStream(res);
 			BufferedImage image = ImageIO.read(input);
 			
-			BufferedImage finalBuffer = getScaledInstance(image, width, height, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, false);
+			BufferedImage finalBuffer = getScaledInstance(image, width, height, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, higherQuality);
 			
 			Bitmap picture = convert(finalBuffer);
-			input.close();
-			image.flush();
-			finalBuffer.flush();
+			input = close(input);
+			image = flush(image);
+			finalBuffer = flush(finalBuffer);
 			return picture;
 			
     	} catch(IOException e) {
+    		System.out.println("Error getting the image");
 			System.exit(1);
 			e.printStackTrace();
 		}
 		
+		return null;
+    }
+    
+    public static Bitmap getAndConvert(InputStream input, int width, int height, boolean higherQuality) {
+    	try {
+			BufferedImage image = ImageIO.read(input);
+			
+			BufferedImage finalBuffer = getScaledInstance(image, width, height, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, higherQuality);
+			
+			Bitmap picture = convert(finalBuffer);
+			input = close(input);
+			image = flush(image);
+			finalBuffer = flush(finalBuffer);
+			return picture;
+		
+		} catch(IOException e) {
+			System.out.println("Error getting the image");
+			System.exit(1);
+			e.printStackTrace();
+		}
+		
+		return null;
+    }
+    
+    public static Bitmap getAndConvert(InputStream input, int scale, boolean higherQuality) {
+    	try {
+			BufferedImage image = ImageIO.read(input);
+			int width;
+			int height;
+			
+			if(scale >= 0) {
+				width = image.getWidth() * scale;
+				height = image.getHeight() * scale;
+			} else {
+				width = image.getWidth() / (scale * -1);
+				height = image.getHeight() / (scale * -1);
+			}
+			BufferedImage finalBuffer = getScaledInstance(image, width, height, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, higherQuality);
+			
+			Bitmap picture = convert(finalBuffer);
+			input = close(input);
+			image = flush(image);
+			finalBuffer = flush(finalBuffer);
+			return picture;
+		
+		} catch(IOException e) {
+			System.out.println("Error getting the image");
+			System.exit(1);
+			e.printStackTrace();
+		}
+		
+		return null;
+    }
+    
+    public static Bitmap get(InputStream input) {
+    	BufferedImage image;
+		try {
+			image = ImageIO.read(input);
+			Bitmap picture = convert(image);
+			
+			input = close(input);
+			image = flush(image);
+			
+	    	return picture;
+		} catch (IOException e) {
+			System.out.println("Error getting the image");
+			System.exit(1);
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
+    public static Bitmap get(String res) {
+    	InputStream input;
+		try {
+			input = new FileInputStream(res);
+			BufferedImage image = ImageIO.read(input);
+			Bitmap picture = convert(image);
+			
+			input = close(input);
+			image = flush(image);
+			
+			return picture;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+    }
+    
+    public static BufferedImage getImage(InputStream input) {
+    	BufferedImage image;
+		try {
+			image = ImageIO.read(input);
+			
+			input = close(input);
+			
+	    	return image;
+		} catch (IOException e) {
+			System.out.println("Error getting the image");
+			System.exit(1);
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
+    public static BufferedImage getImage(String res) {
+    	InputStream input;
+		try {
+			input = new FileInputStream(res);
+			BufferedImage image = ImageIO.read(input);
+			
+			input = close(input);
+			
+			return image;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
     }
         
@@ -271,21 +346,33 @@ public class Art {
             w = targetWidth;
             h = targetHeight;
         }
-        img.flush();
+        img = flush(img);
         do {
-            if (higherQuality && w <= targetWidth) {
+            if (higherQuality && w > targetWidth) {
                 w /= 2;
-                if (w <= targetWidth) {
+                if (w < targetWidth) {
                     w = targetWidth;
                 }
             }
+//            } else if(higherQuality && w <= targetWidth) {
+//            	w *= 2;
+//                if (w >= targetWidth) {
+//                    w = targetWidth;
+//                }
+//            }
 
-            if (higherQuality && h <= targetHeight) {
+            if (higherQuality && h > targetHeight) {
                 h /= 2;
-                if (h <= targetHeight) {
+                if (h < targetHeight) {
                     h = targetHeight;
                 }
             }
+//            } else if(higherQuality && w <= targetHeight) {
+//            	h *= 2;
+//                if (h >= targetHeight) {
+//                    h = targetHeight;
+//                }
+//            }
 
             BufferedImage tmp = new BufferedImage(w, h, type);
             Graphics2D g2 = tmp.createGraphics();
@@ -295,68 +382,39 @@ public class Art {
 
             ret = tmp;
             
-            tmp.flush();
+            //tmp = flush(tmp);
         } while (w != targetWidth || h != targetHeight);
-
+        //tmp = flush(tmp);
         return ret;
     }
+        
         /**
          * 
          * @param bitmap
          * @param w
          * @param h
          * @param game
+         * @param sprite
          * @return BufferedImage
          * @throws IOException
          */
-        public static BufferedImage convertSpritesheet(Bitmap bitmap, int w, int h, Object game) throws IOException {
+        public static BufferedImage convert(Bitmap bitmap, int w, int h, Object game, SpriteHandler sprite) throws IOException {
         	Bitmap result = bitmap;
         	InputStream input = null;
         	BufferedImage image = null;
         	BufferedImage finalImage = null;
-        	for(int i = 0; i < Art.getSpritesheet().length; i++) {
-        		for(int j = 0; j < Art.getSpritesheet()[i].length; j++) {
-        			if(result == Art.getSpritesheet()[i][j]) {
-        				input = game.getClass().getResourceAsStream("/icon0.png");
+        	for(int i = 0; i < sprite.getLength(); i++) {
+        		for(int j = 0; j < sprite.getLength(i); j++) {
+        			if(result == sprite.getSprites(i, j)) {
+        				input = game.getClass().getResourceAsStream(sprite.getRes());
         				image = ImageIO.read(input);
         				finalImage = image.getSubimage(i * w, j * h, w, h);
         			}
         		}
         	}
         	if(image != null)
-        	image.flush();
-        	input.close();
-        	input = null;
-        	image = null;
-        	return finalImage;
-        }
-        
-        /**
-         * 
-         * @param bitmap
-         * @param game
-         * @return BufferedImage
-         * @throws IOException
-         */
-        public static BufferedImage convertSpritesheet(Bitmap bitmap, Object game) throws IOException {
-        	Bitmap result = bitmap;
-        	InputStream input = null;
-        	BufferedImage image = null;
-        	BufferedImage finalImage = null;
-        	for(int i = 0; i < Art.getSpritesheet().length; i++) {
-        		for(int j = 0; j < Art.getSpritesheet()[i].length; j++) {
-        			if(result == Art.getSpritesheet()[i][j]) {
-        				input = game.getClass().getResourceAsStream("/icon0.png");
-        				image = ImageIO.read(input);
-        				finalImage = image.getSubimage(i * 32, j * 32, 32, 32);
-        			}
-        		}
-        	}
-        	if(image != null)
-        	image.flush();
-        	input.close();
-        	input = null;
-        	image = null;
+        		image = flush(image);
+        	input = close(input);
         	return finalImage;
         }
 
