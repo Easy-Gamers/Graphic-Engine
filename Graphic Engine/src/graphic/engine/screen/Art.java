@@ -17,28 +17,6 @@ public class Art {
     	return cut(res, w, h);
     }
     
-
-	private static BufferedImage flush(BufferedImage image) {
-		image.flush();
-		image = null;
-		return image;
-	}
-	
-	private static InputStream close(InputStream input) throws IOException {
-		input.close();
-		input = null;
-		return input;
-	}
-    
-    /**
-     * 
-     * @param res
-     * @param level
-     * @param w
-     * @param h
-     * @param game
-     * @return
-     */
     public static BufferedImage map(String res, int level, int w, int h, Object game){
 		try {
 			// Load the BufferedImage
@@ -79,7 +57,8 @@ public class Art {
 			
 			// Grab RGB Data from image using BufferedImage built in Method
 			image.getRGB(0, 0, w, h, result.pixels, 0, w);
-			image = flush(image);
+			
+			image.flush();
 			return result;
 			} catch(Exception e){
 			e.printStackTrace();
@@ -100,21 +79,23 @@ public class Art {
 			InputStream input = game.getClass().getResourceAsStream(res);
 			BufferedImage image = ImageIO.read(input);
 		
-		int xt = image.getWidth() / w;
-		int yt = image.getHeight() / h;
-		
-		Bitmap[][] result = new Bitmap[xt][yt];
-		BufferedImage sub = null;
-		for(int i = 0; i < xt; i++) {
-			for(int j = 0; j < yt; j++){
-				result[i][j] = new Bitmap(w, h);
-				sub = image.getSubimage(i * w, j * h, w, h);
-				sub.getRGB(0, 0, w, h, result[i][j].pixels, 0, w);
+			int xt = image.getWidth() / w;
+			int yt = image.getHeight() / h;
+			
+			Bitmap[][] result = new Bitmap[xt][yt];
+			BufferedImage sub = null;
+			for(int i = 0; i < xt; i++) {
+				for(int j = 0; j < yt; j++){
+					result[i][j] = new Bitmap(w, h);
+					sub = image.getSubimage(i * w, j * h, w, h);
+					sub.getRGB(0, 0, w, h, result[i][j].pixels, 0, w);
+				}
 			}
-		}
-		input = close(input);
-		image = flush(image);
-		sub = flush(sub);
+			
+			
+			input.close();
+			image.flush();
+			sub.flush();
 		
 			return result;
 		} catch(IOException e) {
@@ -137,21 +118,21 @@ public class Art {
 			InputStream input = new FileInputStream(res);
 			BufferedImage image = ImageIO.read(input);
 		
-		int xt = image.getWidth() / w;
-		int yt = image.getHeight() / h;
-		
-		Bitmap[][] result = new Bitmap[xt][yt];
-		BufferedImage sub = null;
-		for(int i = 0; i < xt; i++) {
-			for(int j = 0; j < yt; j++){
-				result[i][j] = new Bitmap(w, h);
-				sub = image.getSubimage(i * w, j * h, w, h);
-				sub.getRGB(0, 0, w, h, result[i][j].pixels, 0, w);
+			int xt = image.getWidth() / w;
+			int yt = image.getHeight() / h;
+			
+			Bitmap[][] result = new Bitmap[xt][yt];
+			BufferedImage sub = null;
+			for(int i = 0; i < xt; i++) {
+				for(int j = 0; j < yt; j++){
+					result[i][j] = new Bitmap(w, h);
+					sub = image.getSubimage(i * w, j * h, w, h);
+					sub.getRGB(0, 0, w, h, result[i][j].pixels, 0, w);
+				}
 			}
-		}
-		input = close(input);
-		image = flush(image);
-		sub = flush(sub);
+			input.close();
+			image.flush();
+			sub.flush();
 		
 			return result;
 		} catch(IOException e) {
@@ -161,19 +142,15 @@ public class Art {
 		
 		return null;
 	}
-       
-	/**
-	 * 
-	 * @param image
-	 * @return Bitmap
-	 */
+	
     public static Bitmap convert(BufferedImage image) {
             
     	Bitmap result = new Bitmap(image.getWidth(), image.getHeight());
     	
     	image.getRGB(0, 0, image.getWidth(), image.getHeight(), result.pixels, 0, image.getWidth());
     	
-        image = flush(image);
+        image.flush();
+        
         return result;
     }
     
@@ -185,9 +162,11 @@ public class Art {
 			BufferedImage finalBuffer = getScaledInstance(image, width, height, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, higherQuality);
 			
 			Bitmap picture = convert(finalBuffer);
-			input = close(input);
-			image = flush(image);
-			finalBuffer = flush(finalBuffer);
+			
+			input.close();
+			image.flush();
+			finalBuffer.flush();
+			
 			return picture;
 			
     	} catch(IOException e) {
@@ -206,9 +185,11 @@ public class Art {
 			BufferedImage finalBuffer = getScaledInstance(image, width, height, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, higherQuality);
 			
 			Bitmap picture = convert(finalBuffer);
-			input = close(input);
-			image = flush(image);
-			finalBuffer = flush(finalBuffer);
+			
+			input.close();
+			image.flush();
+			finalBuffer.flush();
+			
 			return picture;
 		
 		} catch(IOException e) {
@@ -236,9 +217,11 @@ public class Art {
 			BufferedImage finalBuffer = getScaledInstance(image, width, height, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, higherQuality);
 			
 			Bitmap picture = convert(finalBuffer);
-			input = close(input);
-			image = flush(image);
-			finalBuffer = flush(finalBuffer);
+			
+			input.close();
+			image.flush();
+			finalBuffer.flush();
+			
 			return picture;
 		
 		} catch(IOException e) {
@@ -256,8 +239,8 @@ public class Art {
 			image = ImageIO.read(input);
 			Bitmap picture = convert(image);
 			
-			input = close(input);
-			image = flush(image);
+			input.close();
+			image.flush();
 			
 	    	return picture;
 		} catch (IOException e) {
@@ -275,8 +258,8 @@ public class Art {
 			BufferedImage image = ImageIO.read(input);
 			Bitmap picture = convert(image);
 			
-			input = close(input);
-			image = flush(image);
+			input.close();
+			image.flush();
 			
 			return picture;
 		} catch (IOException e) {
@@ -291,7 +274,7 @@ public class Art {
 		try {
 			image = ImageIO.read(input);
 			
-			input = close(input);
+			input.close();
 			
 	    	return image;
 		} catch (IOException e) {
@@ -308,7 +291,7 @@ public class Art {
 			input = new FileInputStream(res);
 			BufferedImage image = ImageIO.read(input);
 			
-			input = close(input);
+			input.close();
 			
 			return image;
 		} catch (IOException e) {
@@ -317,18 +300,8 @@ public class Art {
 		}
 		return null;
     }
-        
-    /**
-     * 
-     * @param img
-     * @param targetWidth
-     * @param targetHeight
-     * @param key
-     * @param hint
-     * @param higherQuality
-     * @return zoomed in
-     */
-        public static BufferedImage getScaledInstance(BufferedImage img, int targetWidth, int targetHeight, RenderingHints.Key key, Object hint, boolean higherQuality) {
+    
+    public static BufferedImage getScaledInstance(BufferedImage img, int targetWidth, int targetHeight, RenderingHints.Key key, Object hint, boolean higherQuality) {
         int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
         
         BufferedImage ret = (BufferedImage) img;
@@ -346,7 +319,7 @@ public class Art {
             w = targetWidth;
             h = targetHeight;
         }
-        img = flush(img);
+        img.flush();
         do {
             if (higherQuality && w > targetWidth) {
                 w /= 2;
@@ -354,12 +327,6 @@ public class Art {
                     w = targetWidth;
                 }
             }
-//            } else if(higherQuality && w <= targetWidth) {
-//            	w *= 2;
-//                if (w >= targetWidth) {
-//                    w = targetWidth;
-//                }
-//            }
 
             if (higherQuality && h > targetHeight) {
                 h /= 2;
@@ -367,12 +334,6 @@ public class Art {
                     h = targetHeight;
                 }
             }
-//            } else if(higherQuality && w <= targetHeight) {
-//            	h *= 2;
-//                if (h >= targetHeight) {
-//                    h = targetHeight;
-//                }
-//            }
 
             BufferedImage tmp = new BufferedImage(w, h, type);
             Graphics2D g2 = tmp.createGraphics();
@@ -382,40 +343,29 @@ public class Art {
 
             ret = tmp;
             
-            //tmp = flush(tmp);
         } while (w != targetWidth || h != targetHeight);
-        //tmp = flush(tmp);
+        
         return ret;
     }
         
-        /**
-         * 
-         * @param bitmap
-         * @param w
-         * @param h
-         * @param game
-         * @param sprite
-         * @return BufferedImage
-         * @throws IOException
-         */
-        public static BufferedImage convert(Bitmap bitmap, int w, int h, Object game, SpriteHandler sprite) throws IOException {
-        	Bitmap result = bitmap;
-        	InputStream input = null;
-        	BufferedImage image = null;
-        	BufferedImage finalImage = null;
-        	for(int i = 0; i < sprite.getLength(); i++) {
-        		for(int j = 0; j < sprite.getLength(i); j++) {
-        			if(result == sprite.getSprites(i, j)) {
-        				input = game.getClass().getResourceAsStream(sprite.getRes());
-        				image = ImageIO.read(input);
-        				finalImage = image.getSubimage(i * w, j * h, w, h);
-        			}
+    public static BufferedImage convert(Bitmap bitmap, int w, int h, Object game, SpriteHandler sprite) throws IOException {
+    	Bitmap result = bitmap;
+        InputStream input = null;
+        BufferedImage image = null;
+        BufferedImage finalImage = null;
+        for(int i = 0; i < sprite.getLength(); i++) {
+        	for(int j = 0; j < sprite.getLength(i); j++) {
+        		if(result == sprite.getSprites(i, j)) {
+        			input = game.getClass().getResourceAsStream(sprite.getRes());
+        			image = ImageIO.read(input);
+        			finalImage = image.getSubimage(i * w, j * h, w, h);
         		}
         	}
-        	if(image != null)
-        		image = flush(image);
-        	input = close(input);
-        	return finalImage;
         }
+        if(image != null)
+        	image.flush();
+        input.close();
+        return finalImage;
+    }
 
 }

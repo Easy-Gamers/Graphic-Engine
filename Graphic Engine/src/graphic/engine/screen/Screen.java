@@ -12,19 +12,20 @@ public class Screen {
 	private static int width = 0, height = 0;
 	
 	public int[] pixels;
-	
 	/**
-	 * 
+	 * Creates a screen image, the first screen to be created will have it's width and height logged,
+	 * as it will probably be the main screen.
 	 * @param w
 	 * @param h
 	 */
 	public Screen(int w, int h) {
 		this.w = w;
 		this.h = h;
-		if(!(width > 0)) {
+		
+		if(width == 0) {
 			width = w;
 		}
-		if(!(height > 0)) {
+		if(height == 0) {
 			height = h;
 		}
 		
